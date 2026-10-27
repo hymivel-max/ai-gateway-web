@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Model Explorer - AI Gateway Web Client (150+ Models)</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .models-page {
+      width: 100%;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 2rem;
+      background-color: var(--bg-primary);
+    }
+    .models-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .page-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .page-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+    .search-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 260px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: #fff;
+      outline: none;
+      font-size: 0.95rem;
+    }
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .chip {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .chip.active, .chip:hover {
+      background-color: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+    .model-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.75rem;
+      transition: var(--transition);
+    }
+    .model-card:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .card-model-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .card-provider {
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+    .card-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .badge-free {
+      background-color: rgba(52, 211, 153, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+    .badge-commercial {
+      background-color: rgba(129, 140, 248, 0.15);
+      color: var(--accent-violet);
+      border: 1px solid rgba(129, 140, 248, 0.3);
+    }
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.75rem;
+      margin-top: 0.25rem;
+    }
+    .card-context {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .btn-launch {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+      color: #fff;
+      border: none;
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-launch:hover {
+      transform: translateY(-1px);
+    }
+    .back-nav {
+      margin-bottom: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .back-nav:hover { color: var(--accent-cyan); }
+  </style>
+</head>
+<body>
+  <div class="models-page">
+    <div class="models-container">
+      <a href="index.html" class="back-nav">← Back to Chat Playground</a>
+      <h1 class="page-title">Explore 150+ AI Models</h1>
+      <p class="page-subtitle">Instant Zero-Key Free Online, Reasoning, Fast LPUs, Coding, and Commercial Models available across the platform.</p>
+
+      <div class="search-filter-bar">
+        <input type="text" class="search-input" id="searchFilter" placeholder="Search models by name, category, or provider (e.g. GPT-4o, DeepSeek, Gemini, Llama)...">
+        <div class="filter-chips">
+          <button class="chip active" data-filter="all">All Models</button>
+          <button class="chip" data-filter="free_online">Free Online (Zero-Key)</button>
+          <button class="chip" data-filter="coding">Coding & Tech</button>
+          <button class="chip" data-filter="reasoning">Deep Reasoning</button>
+          <button class="chip" data-filter="fast">Ultra Fast LPUs</button>
+          <button class="chip" data-filter="image">Image Gen</button>
+        </div>
+      </div>
+
+      <div class="models-grid" id="modelsGrid">
+        <!-- Rendered dynamically from models_data.js -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/models_data.js"></script>
+  <script>
+    const grid = document.getElementById("modelsGrid");
+    const searchInput = document.getElementById("searchFilter");
+    const chips = document.querySelectorAll(".chip");
+    let currentCategory = "all";
+
+    function renderModels() {
+      const q = searchInput.value.toLowerCase().trim();
+      const filtered = ALL_MODELS.filter(m => {
+        const matchesCategory = (currentCategory === "all") || (m.category === currentCategory);
+        const matchesSearch = !q || m.name.toLowerCase().includes(q) || m.id.toLowerCase().includes(q) || m.providerName.toLowerCase().includes(q) || m.desc.toLowerCase().includes(q);
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding: 3rem; color: var(--text-muted);">No matching models found. Try another search query.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(m => `
+        <div class="model-card">
+          <div class="card-top">
+            <div>
+              <div class="card-model-name">${m.name}</div>
+              <div class="card-provider">${m.providerName}</div>
+            </div>
+            <span class="card-badge ${m.isFree ? 'badge-free' : 'badge-commercial'}">${m.isFree ? 'Free Tier' : 'API Key'}</span>
+          </div>
+          <p class="card-desc">${m.desc}</p>
+          <div class="card-footer">
+            <span class="card-context">Window: <strong>${m.context}</strong></span>
+            <a href="index.html?model=${encodeURIComponent(m.id)}" class="btn-launch">Chat Now →</a>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    searchInput.addEventListener("input", renderModels);
+
+    chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        chips.forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        currentCategory = chip.dataset.filter;
+        renderModels();
+      });
+    });
+
+    renderModels();
+  </script>
+</body>
+</html>
